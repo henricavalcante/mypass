@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>MyPass</title>
+  </head>
+  <body>
+    <header>
+    <h1>MyPass</h1>
+    </header>
+    <ul>
+      <li>Problema: usar uma senha igual e todo lugar.</li>
+      <li>Solução: criar uma senha para cada cadastro ue fizer na web.</li>
+      <li>Problema: Lembrar de 9427398457289347 senhas.</li>
+      <li>Solução: Usar esta ferramenta.</li>
+    </ul>
+    <form action="#">
+      <ol>
+        <li>
+        <input type="text" id="prefix" placeholder="Easy reminder Prefix"/>
+        </li>
+        <li>
+        <input type="text" id="password" placeholder="Your SECRET password"/> 
+        </li>
+        <li>
+        <input type="text" id="salt" placeholder="http://..."/>
+        </li>
+        <li>
+        <input type="text" id="result" placeholder="Your fuckin awesome password"/>
+        </li>
+      </ol>
+    </form>
+    <script>
+      'use strict';
+      const $ = function(_){ return document.getElementById(_) };
+      const PRESS_EVENT = "keydown";
+      const prefix = $('prefix');
+      const password = $('password');
+      const salt = $('salt');
+      const result = $('result');
+
+      prefix.addEventListener(PRESS_EVENT, onChange);
+      password.addEventListener(PRESS_EVENT, onChange);
+      salt.addEventListener(PRESS_EVENT, onChange);
+
+      function onChange() {
+        result.value = prefix.value + encrypt(password.value, salt.value);
+      }
+      function numberKey(number) {
+        return number % 10;
+      }
+      function symbolKey(number) {
+        const symbols = [
+        '!', '@', '#', '$', '%',
+        '^', '&', '*', '(', ')',
+        ':', ';', '{', '}', ',',
+        '[', ']', '/', '\\'];
+        return symbols[number % symbols.length];
+      }
+      function upperKey(number) {
+        return String.fromCharCode(65 + (number % 26));
+      }
+      function lowerKey(number) {
+        return String.fromCharCode(97 + ((number / 100) % 26));
+      }
+      function encrypt(passphrase, string) {
+        return concatKeys(toDecimal(passphrase+string));
+      }
+      function concatKeys(number) {
+        let array = [];
+        array.push(numberKey(number),
+        upperKey(number),
+        symbolKey(number),
+        lowerKey(number));
+        array.sort(shuffleKeys(number));
+        return array.join('');
+      }
+      function shuffleKeys(number) {
+        return .5 - number;
+      }
+      function toDecimal(string) {
+        return string.split('')
+        .map(function(a) { return a.charCodeAt(0); })
+        .reduce(function(a,b) { return a+b });
+      }
+
+    </script>
